@@ -137,7 +137,7 @@ string BaseBag::toString() const {
 	string typeString[] = { "ANTIDOTE", "PHOENIXDOWNI", "PHOENIXDOWNII", "PHOENIXDOWNIII", "PHOENIXDOWNIV" };
 
 	string s = "";
-	s += "[Bag:count=" + to_string(currentSize) + ";";
+	s += "Bag[count=" + to_string(currentSize) + ";";
 
 	if (currentSize != 0) {
 		BaseItem* ptr = itemListHead->next;
@@ -377,7 +377,6 @@ bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponen
 			return 1;
 		}
 	}
-	//log(opponent->eventId);
 	if (opponent->eventId == 6) {
 
 		if (opponent->eventId == 6) {
