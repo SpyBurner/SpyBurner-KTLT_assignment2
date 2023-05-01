@@ -3,6 +3,8 @@
 #define fto(i,a,b) for (int i = a; i<=b; ++i)
 #define fdto(i,a,b) for (int i = a; i >= b; --i)
 
+#define log(st) cout << st << endl
+
 //STATICS HERE
 int OmegaWeapon::ignore = 0;
 int Hades::ignore = 0;
@@ -239,7 +241,7 @@ string BaseKnight::toString() const {
 		+ ",maxhp:" + to_string(maxhp)
 		+ ",level:" + to_string(level)
 		+ ",gil:" + to_string(gil)
-		+ "," + bag->toString();
+		+ "," + bag->toString()
 		+ ",knight_type:" + typeString[knightType]
 		+ "]";
 	return s;
@@ -318,7 +320,7 @@ ArmyKnights::ArmyKnights(const string& file_armyknights) {
 }
 
 ArmyKnights::~ArmyKnights() {
-	fto(i, 0, size) {
+	fto(i, 0, size-1) {
 		delete knights[i];
 	}
 	delete[] knights;
@@ -364,23 +366,28 @@ BaseKnight* ArmyKnights::lastKnight() const {
 }
 
 bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponent) {
-	BaseKnight* knight = lastKnight();
-	if (knight->knightType == PALADIN || knight->knightType == LANCELOT) {
+	BaseKnight* knight = lastKnight();	if (knight->knightType == PALADIN || knight->knightType == LANCELOT) {
+		
 		if (1 <= opponent->eventId && opponent->eventId <= 5) {
+			
 			return 1;
 		}
 	}
+	log(opponent->eventId);
 	if (opponent->eventId == 6) {
-		if (knight->knightType == DRAGON || (knight->hp == knight->maxhp && knight->level == 10))
-			return 1;
+
+		if (opponent->eventId == 6) {
+			if (knight->knightType == DRAGON || (knight->hp == knight->maxhp && knight->level == 10))
+				return 1;
+		}
+			
 		return 0;
 	}
 	if (opponent->eventId == 7) {
 		if (knight->level == 10 || (knight->level >= 8 && knight->knightType == PALADIN))
 			return 1;
 		return 0;
-	}
-	return knight->level >= opponent->levelO();
+	}	return knight->level >= opponent->levelO();
 }
 
 void ArmyKnights::itemOverflow(BaseItem* item, int index) {
@@ -403,6 +410,7 @@ void ArmyKnights::gilOverflow(int amount, int index) {
 }
 
 void ArmyKnights::reward(ArmyKnights* armyknight, BaseOpponent* opponent) {
+	
 	int eventid = opponent->eventId;
 	BaseKnight* knight = armyknight->lastKnight();
 
@@ -439,7 +447,9 @@ void ArmyKnights::heal() {
 	return;
 }
 void ArmyKnights::pop() {
-	current--;
+	if (current >= 0) {
+		current--;
+	}
 }
 
 /* * * END implementation of class ArmyKnights * * */

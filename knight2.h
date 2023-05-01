@@ -255,19 +255,24 @@ class Tornbery : public BaseOpponent {
     void specialPunish(ArmyKnights* armyknight) override;
 public:
     Tornbery() {
+        eventId = 6;
         rewardLevel = 1;
         forceDamage = 10;
-    }
-   
+    } 
 };
 class QueenOfCards : public BaseOpponent {
     void specialReward(ArmyKnights* armyknight) override;
     void specialPunish(ArmyKnights* armyknight) override;
+public:
+    QueenOfCards() {
+        eventId = 7;
+    }
 };
 class NinaDeRings : public BaseOpponent {
     void specialReward(ArmyKnights* armyknight) override;
 public:
     NinaDeRings() {
+        eventId = 8;
         evil = 0;
     }
 };
@@ -275,6 +280,7 @@ class DurianGarden : public BaseOpponent {
     void specialReward(ArmyKnights* armyknight) override;
 public:
     DurianGarden() {
+        eventId = 9;
         evil = 0;
     }
 };
@@ -284,6 +290,10 @@ class OmegaWeapon : public BaseOpponent {
 
     static int ignore;
     void ignoreNextTime() override;
+public:
+    OmegaWeapon() {
+        eventId = 10;
+    }
 };
 class Hades : public BaseOpponent {
     void specialReward(ArmyKnights* armyknight) override;
@@ -291,6 +301,10 @@ class Hades : public BaseOpponent {
 
     static int ignore;
     void ignoreNextTime() override;
+public:
+    Hades() {
+        eventId = 11;
+    }
 };
 class PickPhoenixDown : public BaseOpponent {
     void specialReward(ArmyKnights* armyknight) override;
@@ -313,9 +327,9 @@ public:
 
 class Events {
 private:
-    int size;
-    int current;
-    int* eventList;
+    int size = 0;
+    int current = 0;
+    int* eventList = nullptr;
 
 public:
     Events(const string& file_events);
@@ -329,9 +343,9 @@ public:
 
 class ArmyKnights {
 private:
-    int size;
-    int current;
-    BaseKnight** knights;
+    int size = 0;
+    int current = 0;
+    BaseKnight** knights = nullptr;
     
 
 public:
@@ -367,8 +381,8 @@ public:
 
 class KnightAdventure {
 private:
-    ArmyKnights * armyKnights;
-    Events * events;
+    ArmyKnights * armyKnights = nullptr;
+    Events * events = nullptr;
 
 public:
     KnightAdventure();
