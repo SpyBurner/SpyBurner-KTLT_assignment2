@@ -52,8 +52,8 @@ BaseBag::~BaseBag() {
 	}
 }
 
-int BaseBag::maxCapacity() {
-	return capacity;
+int BaseBag::count() {
+	return currentSize;
 }
 
 bool BaseBag::insertFirst(BaseItem* item) {
@@ -163,7 +163,9 @@ bool DragonBag::canHold(ItemType itemType) {
 //
 
 void BaseBag::dropItem() {
-	erase(itemListHead->next);
+	if (count() > 0) {
+		erase(itemListHead->next);
+	}
 }
 
 /* * * END implementation of class BaseBag * * */
@@ -420,14 +422,18 @@ void ArmyKnights::reward(ArmyKnights* armyknight, BaseOpponent* opponent) {
 	opponent->specialReward(armyknight);
 }
 void ArmyKnights::punish(ArmyKnights* armyknight, BaseOpponent* opponent) {
+	log("entry");
 	int eventid = opponent->eventId;
 	BaseKnight* knight = armyknight->lastKnight();
+	log("initialization");
 
 	int damage = opponent->baseDamage * (opponent->levelO() - knight->level);
 	if (opponent->forceDamage != 0) damage = opponent->forceDamage;
 	knight->hp -= damage;
 
+	log("damage");
 	opponent->specialPunish(armyknight);
+	log("punishDone");
 }
 
 void ArmyKnights::heal() {
@@ -607,7 +613,6 @@ void Hades::specialPunish(ArmyKnights* armyknight) {
 void Hades::ignoreNextTime() {
 	Hades::ignore = 1;
 }
-
 
 void PickPhoenixDown::specialReward(ArmyKnights* armyknight) {
 	BaseItem* item = nullptr;

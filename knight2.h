@@ -22,7 +22,7 @@ protected:
 public:
     virtual ~BaseBag();
 
-    virtual int maxCapacity();
+    virtual int count();
 
     virtual bool insertFirst(BaseItem* item);
     virtual BaseItem* get(ItemType itemType);
