@@ -38,18 +38,6 @@ KnightType DetermineKnightType(int maxhp){
 //
 
 /* * * BEGIN implementation of class BaseBag * * */
-PaladinBag::PaladinBag() {
-	capacity = -1;
-}
-LancelotBag::LancelotBag() {
-	capacity = 16;
-}
-DragonBag::DragonBag() {
-	capacity = -1;
-}
-NormalBag::NormalBag() {
-	capacity = 19;
-}
 
 BaseBag::~BaseBag() {
 	BaseItem* ptr = itemListHead;
@@ -465,9 +453,11 @@ BaseOpponent::~BaseOpponent() {
 }
 
 PickPhoenixDown::PickPhoenixDown(int eventId) {
+	evil = 0;
 	this->eventId = eventId;
 }
 PickTreasure::PickTreasure(int eventId) {
+	evil = 0;
 	this->eventId = eventId;
 }
 

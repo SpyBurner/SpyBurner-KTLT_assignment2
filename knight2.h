@@ -38,21 +38,29 @@ public:
 /// <Custom bags>
 class PaladinBag : public BaseBag {
 public:
-    PaladinBag();
+    PaladinBag() {
+        capacity = -1;
+    }
 };
 class LancelotBag : public BaseBag {
 public:
-    LancelotBag();
+    LancelotBag() {
+        capacity = 16;
+    }
 };
 class DragonBag : public BaseBag {
 public:
-    DragonBag();
+    DragonBag() {
+        capacity = 14;
+    }
 
     bool canHold(ItemType itemType) override;
 };
 class NormalBag : public BaseBag {
 public:
-    NormalBag();
+    NormalBag() {
+        capacity = 19;
+    }
 };
 /// </Custom bags>
 
@@ -112,35 +120,45 @@ public:
 //ANTIDOTE , PHOENIXDOWNI, PHOENIXDOWNII, PHOENIXDOWNIII, PHOENIXDOWNIV
 class Antidote : public BaseItem {
 public:
-    ItemType itemType = ANTIDOTE;
+    Antidote() {
+        itemType = ANTIDOTE;
+    }
 
     bool canUse(BaseKnight* knight);
     void use(BaseKnight* knight);
 };
 class PhoenixdownI : public BaseItem {
 public:
-    ItemType itemType = PHOENIXDOWNI;
+    PhoenixdownI() {
+        itemType = PHOENIXDOWNI;
+    }
 
     bool canUse(BaseKnight* knight);
     void use(BaseKnight* knight);
 };
 class PhoenixdownII : public BaseItem {
 public:
-    ItemType itemType = PHOENIXDOWNII;
+    PhoenixdownII() {
+        itemType = PHOENIXDOWNII;
+    }
 
     bool canUse(BaseKnight* knight);
     void use(BaseKnight* knight);
 };
 class PhoenixdownIII : public BaseItem {
 public:
-    ItemType itemType = PHOENIXDOWNIII;
+    PhoenixdownIII() {
+        itemType = PHOENIXDOWNIII;
+    }
 
     bool canUse(BaseKnight* knight);
     void use(BaseKnight* knight);
 };
 class PhoenixdownIV : public BaseItem {
 public:
-    ItemType itemType = PHOENIXDOWNIV;
+    PhoenixdownIV() {
+        itemType = PHOENIXDOWNIV;
+    }
 
     bool canUse(BaseKnight* knight);
     void use(BaseKnight* knight);
@@ -185,79 +203,104 @@ public:
 
 class MadBear : public BaseOpponent {
 public:
-    int eventId = 1;
-    int rewardGil = 100;
-    int baseDamage = 10;
+    MadBear() {
+        eventId = 1;
+        rewardGil = 100;
+        baseDamage = 10;
+    }
 };
 class Bandit : public BaseOpponent {
 public:
-    int eventId = 2;
-    int rewardGil = 150;
-    int baseDamage = 15;
+    Bandit() {
+        eventId = 2;
+        rewardGil = 150;
+        baseDamage = 15;
+    }
 };
 class LordLupin : public BaseOpponent {
 public:
-    int eventId = 3;
-    int rewardGil = 450;
-    int baseDamage = 45;
+    LordLupin() {
+        eventId = 3;
+        rewardGil = 450;
+        baseDamage = 45;
+    }
 };
 class Elf : public BaseOpponent {
 public:
-    int eventId = 4;
-    int rewardGil = 750;
-    int baseDamage = 75;
+    Elf() {
+        eventId = 4;
+        rewardGil = 750;
+        baseDamage = 75;
+    }
 };
 class Troll : public BaseOpponent {
 public:
-    int eventId = 5;
-    int rewardGil = 800;
-    int baseDamage = 95;
+    Troll() {
+        eventId = 5;
+        rewardGil = 800;
+        baseDamage = 95;
+    }
 };
 
 //Event opponents
 class Tornbery : public BaseOpponent {
-    int rewardLevel = 1;
-    int forceDamage = 10;
-
-    void specialPunish(ArmyKnights* armyknight);
+    void specialPunish(ArmyKnights* armyknight) override;
+public:
+    Tornbery() {
+        rewardLevel = 1;
+        forceDamage = 10;
+    }
+   
 };
 class QueenOfCards : public BaseOpponent {
-    void specialReward(ArmyKnights* armyknight);
-    void specialPunish(ArmyKnights* armyknight);
+    void specialReward(ArmyKnights* armyknight) override;
+    void specialPunish(ArmyKnights* armyknight) override;
 };
 class NinaDeRings : public BaseOpponent {
-    int evil = 0;
-    void specialReward(ArmyKnights* armyknight);
+    void specialReward(ArmyKnights* armyknight) override;
+public:
+    NinaDeRings() {
+        evil = 0;
+    }
 };
 class DurianGarden : public BaseOpponent {
-    int evil = 0;
-    void specialReward(ArmyKnights* armyknight);
+    void specialReward(ArmyKnights* armyknight) override;
+public:
+    DurianGarden() {
+        evil = 0;
+    }
 };
 class OmegaWeapon : public BaseOpponent {
-    void specialReward(ArmyKnights* armyknight);
-    void specialPunish(ArmyKnights* armyknight);
+    void specialReward(ArmyKnights* armyknight) override;
+    void specialPunish(ArmyKnights* armyknight) override;
 
     static int ignore;
-    void ignoreNextTime();
+    void ignoreNextTime() override;
 };
 class Hades : public BaseOpponent {
-    void specialReward(ArmyKnights* armyknight);
-    void specialPunish(ArmyKnights* armyknight);
+    void specialReward(ArmyKnights* armyknight) override;
+    void specialPunish(ArmyKnights* armyknight) override;
 
     static int ignore;
-    void ignoreNextTime();
+    void ignoreNextTime() override;
 };
 class PickPhoenixDown : public BaseOpponent {
+    void specialReward(ArmyKnights* armyknight) override;
 public:
-    int evil = 0;
+    PickPhoenixDown() {
+        evil = 0;
+    }
+
     PickPhoenixDown(int eventId);
-    void specialReward(ArmyKnights* armyknight);
 };
 class PickTreasure : public BaseOpponent {
+    void specialReward(ArmyKnights* armyknight) override;
 public:
-    int evil = 0;
+    PickTreasure() {
+        evil = 0;
+    }
+
     PickTreasure(int eventId);
-    void specialReward(ArmyKnights* armyknight);
 };
 
 class Events {
