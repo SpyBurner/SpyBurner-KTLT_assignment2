@@ -57,11 +57,12 @@ int BaseBag::count() {
 }
 
 bool BaseBag::insertFirst(BaseItem* item) {
+	//log("entry");
 	if (currentSize == capacity || !canHold(item->itemType)) return 0;
-
+	//log("after first check");
 	if (currentSize == 0) {
-		itemListHead = item;
-		itemListHead->next = nullptr;
+		itemListHead = new Antidote;
+		itemListHead->next = item;
 	}
 	else {
 		item->next = itemListHead->next;
