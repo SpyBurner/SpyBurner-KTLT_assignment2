@@ -14,13 +14,15 @@ class ArmyKnights;
 
 class BaseBag {
 protected:
-//public:
+//public:*
     int capacity = 0;
     int currentSize = 0;
     BaseItem* itemListHead = nullptr;
 
 public:
     ~BaseBag();
+
+    int maxCapacity();
 
     virtual bool insertFirst(BaseItem* item);
     virtual BaseItem* get(ItemType itemType);
@@ -31,7 +33,7 @@ public:
     virtual void erase(BaseItem* item);
 
     virtual bool canHold(ItemType itemType);
-    void dropItem();
+    virtual void dropItem();
 };
 /// <Custom bags>
 class PaladinBag : public BaseBag {
@@ -50,7 +52,7 @@ public:
 };
 class NormalBag : public BaseBag {
 public:
-    int capacity = 19;
+    NormalBag();
 };
 /// </Custom bags>
 

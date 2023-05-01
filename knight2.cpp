@@ -38,6 +38,10 @@ KnightType DetermineKnightType(int maxhp){
 //
 
 /* * * BEGIN implementation of class BaseBag * * */
+NormalBag::NormalBag() {
+	capacity = 19;
+}
+
 BaseBag::~BaseBag() {
 	BaseItem* ptr = itemListHead;
 	while (ptr != nullptr)
@@ -47,6 +51,10 @@ BaseBag::~BaseBag() {
 
 		delete current;
 	}
+}
+
+int BaseBag::maxCapacity() {
+	return capacity;
 }
 
 bool BaseBag::insertFirst(BaseItem* item) {
@@ -129,6 +137,8 @@ string BaseBag::toString() const {
 
 	string s = "";
 	s += "[Bag:count=" + to_string(currentSize) + ";";
+
+	return s+=to_string(capacity);
 
 	//BaseItem* ptr = itemListHead->next;
 	//while (ptr != nullptr) {
@@ -240,6 +250,8 @@ BaseKnight* BaseKnight::create(int id, int maxhp, int level, int gil, int antido
 	KnightType typeOfKnight = DetermineKnightType(maxhp);
 	BaseKnight* res = nullptr;
 
+	cout << typeOfKnight << endl;
+
 	switch (typeOfKnight)
 	{
 	case PALADIN:
@@ -260,12 +272,12 @@ BaseKnight* BaseKnight::create(int id, int maxhp, int level, int gil, int antido
 		break;
 	}
 
+	cout << res->bag->maxCapacity() << endl;
+
 	res->id = id;
 	res->hp = res->maxhp = maxhp;
 	res->level = level;
 	res->gil = gil;
-	//res->antidote = antidote;
-	//res->phoenixdownI = phoenixdownI;
 
 	fto(i, 1, phoenixdownI) {
 		PhoenixdownI* phoenixdownI = new PhoenixdownI;
