@@ -38,6 +38,15 @@ KnightType DetermineKnightType(int maxhp){
 //
 
 /* * * BEGIN implementation of class BaseBag * * */
+PaladinBag::PaladinBag() {
+	capacity = -1;
+}
+LancelotBag::LancelotBag() {
+	capacity = 16;
+}
+DragonBag::DragonBag() {
+	capacity = -1;
+}
 NormalBag::NormalBag() {
 	capacity = 19;
 }
@@ -138,16 +147,14 @@ string BaseBag::toString() const {
 	string s = "";
 	s += "[Bag:count=" + to_string(currentSize) + ";";
 
-	return s+=to_string(capacity);
+	BaseItem* ptr = itemListHead->next;
+	while (ptr != nullptr) {
+		cout << ptr->itemType << endl;
+		s += typeString[int(ptr->itemType)];
+		ptr = ptr->next;
 
-	//BaseItem* ptr = itemListHead->next;
-	//while (ptr != nullptr) {
-	//	//cout << ptr->itemType << endl;
-	//	//s += typeString[int(ptr->itemType)];
-	//	ptr = ptr->next;
-
-	//	if (ptr != nullptr) s += ",";
-	//}
+		if (ptr != nullptr) s += ",";
+	}
 	s += "]";
 	return s;
 }

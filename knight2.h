@@ -20,9 +20,9 @@ protected:
     BaseItem* itemListHead = nullptr;
 
 public:
-    ~BaseBag();
+    virtual ~BaseBag();
 
-    int maxCapacity();
+    virtual int maxCapacity();
 
     virtual bool insertFirst(BaseItem* item);
     virtual BaseItem* get(ItemType itemType);
@@ -38,17 +38,17 @@ public:
 /// <Custom bags>
 class PaladinBag : public BaseBag {
 public:
-    int capacity = -1;
+    PaladinBag();
 };
 class LancelotBag : public BaseBag {
 public:
-    int capacity = 16;
+    LancelotBag();
 };
 class DragonBag : public BaseBag {
 public:
-    int capacity = 14;
+    DragonBag();
 
-    bool canHold(ItemType itemType);
+    bool canHold(ItemType itemType) override;
 };
 class NormalBag : public BaseBag {
 public:
@@ -73,7 +73,7 @@ public:
     KnightType knightType = NORMAL;
 
 public:
-    ~BaseKnight();
+    virtual ~BaseKnight();
 
     static BaseKnight * create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI);
     string toString() const;
@@ -103,7 +103,7 @@ public:
     BaseItem* next = nullptr;
     ItemType itemType = ANTIDOTE;
 
-    ~BaseItem();
+    virtual ~BaseItem();
 
     virtual bool canUse(BaseKnight* knight) = 0;
     virtual void use(BaseKnight* knight) = 0;
@@ -162,7 +162,7 @@ public:
 
 class BaseOpponent {
 public: 
-    ~BaseOpponent();
+    virtual ~BaseOpponent();
 
     int baseDamage = 0;
     int forceDamage = 0;
@@ -268,7 +268,7 @@ private:
 
 public:
     Events(const string& file_events);
-    ~Events();
+    virtual ~Events();
 
     int count() const;
     int get(int i) const;
@@ -287,7 +287,7 @@ public:
     int TreasureChecklist[5];
 
     ArmyKnights(const string& file_armyknights);
-    ~ArmyKnights();
+    virtual ~ArmyKnights();
     bool adventure(Events* events);
     int count() const;
     BaseKnight* lastKnight() const;
@@ -321,7 +321,7 @@ private:
 
 public:
     KnightAdventure();
-    ~KnightAdventure(); // TODO:
+    virtual ~KnightAdventure(); // TODO:
 
     void loadArmyKnights(const string& file_armyknights);
     void loadEvents(const string& file_events);
