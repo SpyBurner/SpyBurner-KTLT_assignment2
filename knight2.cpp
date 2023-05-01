@@ -135,14 +135,17 @@ string BaseBag::toString() const {
 	string s = "";
 	s += "[Bag:count=" + to_string(currentSize) + ";";
 
-	BaseItem* ptr = itemListHead->next;
-	while (ptr != nullptr) {
-		cout << ptr->itemType << endl;
-		s += typeString[int(ptr->itemType)];
-		ptr = ptr->next;
+	if (currentSize != 0) {
+		BaseItem* ptr = itemListHead->next;
+		while (ptr != nullptr) {
+			cout << ptr->itemType << endl;
+			s += typeString[int(ptr->itemType)];
+			ptr = ptr->next;
 
-		if (ptr != nullptr) s += ",";
+			if (ptr != nullptr) s += ",";
+		}
 	}
+
 	s += "]";
 	return s;
 }
@@ -245,7 +248,6 @@ BaseKnight* BaseKnight::create(int id, int maxhp, int level, int gil, int antido
 	KnightType typeOfKnight = DetermineKnightType(maxhp);
 	BaseKnight* res = nullptr;
 
-	cout << typeOfKnight << endl;
 
 	switch (typeOfKnight)
 	{
@@ -266,8 +268,6 @@ BaseKnight* BaseKnight::create(int id, int maxhp, int level, int gil, int antido
 		res->bag = new NormalBag;
 		break;
 	}
-
-	cout << res->bag->maxCapacity() << endl;
 
 	res->id = id;
 	res->hp = res->maxhp = maxhp;

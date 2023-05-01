@@ -90,19 +90,27 @@ public:
 /// <Custom knights
 class PaladinKnight : public BaseKnight {
 public:
-    double knightBaseDamage = 0.06;
+    PaladinKnight() {
+        knightBaseDamage = 0.06;
+    }
 };
 class LancelotKnight : public BaseKnight {
 public:
-    double knightBaseDamage = 0.05;
+    LancelotKnight() {
+        knightBaseDamage = 0.05;
+    }
 };
 class DragonKnight : public BaseKnight {
 public:
-    double knightBaseDamage = 0.075;
+    DragonKnight() {
+        knightBaseDamage = 0.075;
+    }
 };
 class NormalKnight : public BaseKnight {
 public:
-    double knightBaseDamage = 0;
+    NormalKnight() {
+        knightBaseDamage = 0;
+    }
 };
 /// </Custom knights>
 
