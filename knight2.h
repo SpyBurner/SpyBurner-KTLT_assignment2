@@ -29,7 +29,6 @@ public:
     virtual BaseItem* getPhoenixDown(BaseKnight* knight);
     virtual string toString() const;
 
-    virtual void swap(BaseItem* item1, BaseItem* item2);
     virtual void erase(BaseItem* item);
 
     virtual bool canHold(ItemType itemType);
@@ -344,7 +343,7 @@ public:
 class ArmyKnights {
 private:
     int size = 0;
-    int current = 0;
+    int current = -1;
     BaseKnight** knights = nullptr;
     
 

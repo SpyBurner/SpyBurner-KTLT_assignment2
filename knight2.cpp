@@ -57,9 +57,7 @@ int BaseBag::count() {
 }
 
 bool BaseBag::insertFirst(BaseItem* item) {
-	//log("entry");
 	if (currentSize == capacity || !canHold(item->itemType)) return 0;
-	//log("after first check");
 	if (currentSize == 0) {
 		itemListHead = new Antidote;
 		itemListHead->next = item;
@@ -94,44 +92,26 @@ BaseItem* BaseBag::getPhoenixDown(BaseKnight* knight) {
 	return item;
 }
 
-void BaseBag::swap(BaseItem* item1, BaseItem* item2) {
-	BaseItem* preItem1 = itemListHead;
-	BaseItem* preItem2 = itemListHead;
-	BaseItem* item1Ptr = itemListHead->next;
-	BaseItem* item2Ptr = itemListHead->next;
-
-	while (item1Ptr != item1) {
-		preItem1 = item1Ptr;
-		item1Ptr = item1Ptr->next;
-	}
-	while (item2Ptr != item2) {
-		preItem2 = item2Ptr;
-		item2Ptr = item2Ptr->next;
-	}
-
-	preItem1->next = item2Ptr;
-	preItem2->next = item1Ptr;
-
-	BaseItem* tempItem1Next = item1Ptr->next;
-	item1Ptr->next = item2Ptr->next;
-	item2Ptr->next = tempItem1Next;
-}
 void BaseBag::erase(BaseItem* item) {
 	if (currentSize <= 0) return;
 	BaseItem* preItem = itemListHead;
 	BaseItem* itemPtr = itemListHead->next;
-
 	while (itemPtr != item) {
 		preItem = itemPtr;
 		itemPtr = itemPtr->next;
 	}
-
-	swap(itemListHead->next, itemPtr);
+	if (preItem != itemListHead) {
+		preItem->next = itemListHead->next;
+		BaseItem* temp = itemListHead->next->next;
+		itemListHead->next->next = itemPtr->next;
+		itemPtr->next = temp;
+		itemListHead->next = itemPtr;
+	}
 
 	itemListHead->next = itemPtr->next;
-	currentSize--;
-
+	
 	delete itemPtr;
+	currentSize--;
 }
 
 string BaseBag::toString() const {
@@ -143,7 +123,7 @@ string BaseBag::toString() const {
 	if (currentSize != 0) {
 		BaseItem* ptr = itemListHead->next;
 		while (ptr != nullptr) {
-			cout << ptr->itemType << endl;
+			log(int(ptr->itemType));
 			s += typeString[int(ptr->itemType)];
 			ptr = ptr->next;
 
@@ -192,8 +172,6 @@ bool PhoenixdownI::canUse(BaseKnight* knight) {
 }
 void PhoenixdownI::use(BaseKnight* knight) {
 	knight->hp = knight->maxhp;
-
-	knight->hp = min(knight->hp, knight->maxhp);
 }
 
 bool PhoenixdownII::canUse(BaseKnight* knight) {
@@ -367,7 +345,8 @@ int ArmyKnights::count() const {
 	return current;
 }
 BaseKnight* ArmyKnights::lastKnight() const {
-	return knights[current];
+	if (count() <= 0) return nullptr;
+	return knights[count()];
 }
 
 bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponent) {
@@ -735,6 +714,7 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 
 	if (opponent->ignore) return 1;
 
+	//log("win = " + to_string(DetermineWinner(this, opponent)));
 	if (DetermineWinner(this, opponent)) {
 		reward(this, opponent);
 
@@ -743,11 +723,12 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 	}
 	else {
 		punish(this, opponent);
-
 		if (knight->hp < knight->maxhp) {
 			heal();
 		}
-		if (knight->hp <= 0) return 0;
+		if (knight->hp <= 0) {
+			return 0;
+		}
 	}
 
 	return 1;
