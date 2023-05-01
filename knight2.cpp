@@ -71,6 +71,7 @@ bool BaseBag::insertFirst(BaseItem* item) {
 	return 1;
 }
 BaseItem* BaseBag::get(ItemType itemType) {
+	if (count() <= 0) return nullptr;
 	BaseItem* item = itemListHead->next;
 	int index = 1;
 	while (item != nullptr) {
@@ -81,6 +82,7 @@ BaseItem* BaseBag::get(ItemType itemType) {
 	return item;
 }
 BaseItem* BaseBag::getPhoenixDown(BaseKnight* knight) {
+	if (count() <= 0) return nullptr;
 	BaseItem* item = itemListHead->next;
 	while (item != nullptr) {
 		if (PHOENIXDOWNI <= item->itemType && item->itemType <= PHOENIXDOWNIV && item->canUse(knight)) {
@@ -375,7 +377,7 @@ bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponen
 			return 1;
 		}
 	}
-	log(opponent->eventId);
+	//log(opponent->eventId);
 	if (opponent->eventId == 6) {
 
 		if (opponent->eventId == 6) {
@@ -422,18 +424,14 @@ void ArmyKnights::reward(ArmyKnights* armyknight, BaseOpponent* opponent) {
 	opponent->specialReward(armyknight);
 }
 void ArmyKnights::punish(ArmyKnights* armyknight, BaseOpponent* opponent) {
-	log("entry");
 	int eventid = opponent->eventId;
 	BaseKnight* knight = armyknight->lastKnight();
-	log("initialization");
 
 	int damage = opponent->baseDamage * (opponent->levelO() - knight->level);
 	if (opponent->forceDamage != 0) damage = opponent->forceDamage;
 	knight->hp -= damage;
 
-	log("damage");
 	opponent->specialPunish(armyknight);
-	log("punishDone");
 }
 
 void ArmyKnights::heal() {
