@@ -31,6 +31,7 @@ public:
     virtual BaseItem* getPhoenixDown(BaseKnight* knight);
     virtual string toString() const;
 
+    virtual bool swap(BaseItem* item1, BaseItem* item2);
     virtual void erase(BaseItem* item);
 
     virtual bool canHold(ItemType itemType);
@@ -121,8 +122,6 @@ public:
     ItemType itemType = ANTIDOTE;
 
     int id = 0;
-
-    virtual ~BaseItem();
 
     virtual bool canUse(BaseKnight* knight) = 0;
     virtual void use(BaseKnight* knight) = 0;

@@ -63,6 +63,7 @@ void BaseBag::print() {
 
 int BaseBag::count() const{
 	//return currentSize;
+	if (currentSize == 0) return 0;
 	BaseItem* ptr = itemListHead->next;
 	int cnt = 0;
 	while (ptr != nullptr) {
@@ -108,36 +109,57 @@ BaseItem* BaseBag::getPhoenixDown(BaseKnight* knight) {
 	return item; //Return nullptr if not found
 }
 
-void BaseBag::erase(BaseItem* item) {
-	if (currentSize <= 0) return;
-	BaseItem* preItem = itemListHead;
-	BaseItem* itemPtr = itemListHead->next;
-	while (itemPtr != item && itemPtr != nullptr) {
-		preItem = itemPtr;
-		itemPtr = itemPtr->next;
+bool BaseBag::swap(BaseItem* item1, BaseItem* item2) {
+	if (itemListHead == nullptr) return 0;
+
+	BaseItem* pre1 = itemListHead;
+	BaseItem* pre2 = itemListHead;
+	BaseItem* itemPtr1 = itemListHead->next;
+	BaseItem* itemPtr2 = itemListHead->next;
+
+	while (itemPtr1 != nullptr && itemPtr1 != item1) {
+		pre1 = itemPtr1;
+		itemPtr1 = itemPtr1->next;
+	}
+	while (itemPtr2 != nullptr && itemPtr2 != item2) {
+		pre2 = itemPtr2;
+		itemPtr2 = itemPtr2->next;
 	}
 
-	if (itemPtr == nullptr) return;
+	if (itemPtr1 == nullptr || itemPtr2 == nullptr) return 0;
 
-	BaseItem* item1 = itemListHead->next;
-	BaseItem* item2 = itemPtr;
-	
-	BaseItem* temp = item1->next;
-	item1->next = item2->next;
-	item2->next = temp;
+	if (pre1 != itemListHead) {
+		pre1->next = itemPtr2;
+	}
+	else {
+		itemListHead->next = itemPtr2;
+	}
 
-	itemListHead->next = item2;
-	preItem->next = item1;
+	if (pre2 != itemListHead) {
+		pre2->next = itemPtr1;
+	}
+	else {
+		itemListHead->next = itemPtr1;
+	}
 
-	itemListHead->next = itemPtr->next;
+	BaseItem* temp = itemPtr1->next;
+	itemPtr1->next = itemPtr2->next;
+	itemPtr2->next = temp;
 
-	delete itemPtr;
-	itemPtr = nullptr;
-	currentSize--;
+	return 1;
+}
+
+void BaseBag::erase(BaseItem* item) {
+	bool erasible = swap(itemListHead->next, item);
+	if (!erasible) return;
+
+	itemListHead->next = itemListHead->next->next;
+	delete item;
+	item = nullptr;
 }
 
 string BaseBag::toString() const {
-	string typeString[] = { "ANTIDOTE", "PHOENIXDOWNI", "PHOENIXDOWNII", "PHOENIXDOWNIII", "PHOENIXDOWNIV" };
+	string typeString[] = { "Antidote", "PhoenixI", "PhoenixII", "PhoenixIII", "PhoenixIV" };
 
 	string s = "";
 	s += "Bag[count=" + to_string(count()) + ";";
@@ -174,9 +196,7 @@ void BaseBag::dropItem() {
 /* * * END implementation of class BaseBag * * */
 
 /* * * BEGIN implementation of class BaseItem * * */
-BaseItem::~BaseItem() {
-	delete next;
-}
+
 
 bool Antidote::canUse(BaseKnight* knight) {
 	return 1;
@@ -725,19 +745,6 @@ bool ArmyKnights::adventure(Events* events) {
 		printInfo();
 		delete opponent;
 	}
-
-
-	//log
-	BaseKnight* knight = lastKnight();
-
-	knight->bag->print();
-	knight->hp = 0;
-	BaseItem* phoe = knight->bag->getPhoenixDown(knight);
-
-	knight->bag->erase(phoe);
-	knight->bag->print();
-	//
-
 
 	return 0;//DECOY
 }
