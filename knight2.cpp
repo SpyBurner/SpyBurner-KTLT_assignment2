@@ -72,11 +72,9 @@ bool BaseBag::insertFirst(BaseItem* item) {
 BaseItem* BaseBag::get(ItemType itemType) {
 	if (count() <= 0) return nullptr;
 	BaseItem* item = itemListHead->next;
-	int index = 1;
 	while (item != nullptr) {
 		if (item->itemType == itemType) break;
 		item = item->next;
-		index++;
 	}
 	return item;
 }
@@ -96,10 +94,13 @@ void BaseBag::erase(BaseItem* item) {
 	if (currentSize <= 0) return;
 	BaseItem* preItem = itemListHead;
 	BaseItem* itemPtr = itemListHead->next;
-	while (itemPtr != item) {
+	while (itemPtr != item && itemPtr != nullptr) {
 		preItem = itemPtr;
 		itemPtr = itemPtr->next;
 	}
+
+	if (itemPtr == nullptr) return;
+
 	if (preItem != itemListHead) {
 		preItem->next = itemListHead->next;
 		BaseItem* temp = itemListHead->next->next;
