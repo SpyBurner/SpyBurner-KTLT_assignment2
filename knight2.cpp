@@ -74,6 +74,8 @@ int BaseBag::count() const{
 }
 
 bool BaseBag::insertFirst(BaseItem* item) {
+	//log("Bag size:");
+	//log(currentSize);
 	if (currentSize == capacity || !canHold(item->itemType)) return 0;
 	if (currentSize == 0) {
 		itemListHead = new Antidote;
@@ -154,6 +156,8 @@ void BaseBag::erase(BaseItem* item) {
 	itemListHead->next = itemListHead->next->next;
 	delete item;
 	item = nullptr;
+
+	currentSize--;
 }
 
 string BaseBag::toString() const {
@@ -364,7 +368,7 @@ bool ArmyKnights::hasExcaliburSword() const {
 
 void ArmyKnights::printInfo() const {
 	cout << "No. knights: " << this->count();
-	if (this->count() > 0) {
+	if (this->current > 0) {
 		BaseKnight* lknight = lastKnight(); // last knight
 		cout << ";" << lknight->toString();
 	}
@@ -380,11 +384,14 @@ void ArmyKnights::printResult(bool win) const {
 }
 
 int ArmyKnights::count() const {
-	return current;
+	//log(skippedKnight);
+	//log(current);
+	return current + ((printingResult)? skippedKnight : 0);
 }
 BaseKnight* ArmyKnights::lastKnight() const {
-	if (count() <= 0) return nullptr;
-	return knights[count()];
+	if (current <= 0) return nullptr;
+	if (UltimeciaLastKnight != nullptr && printingResult) return UltimeciaLastKnight;
+	return knights[current];
 }
 
 bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponent) {
@@ -394,23 +401,29 @@ bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponen
 			return 1;
 		}
 	}
-	if (opponent->eventId == 6) {
+	if (opponent->eventId == 10) {
 
-		if (opponent->eventId == 6) {
+		if (opponent->eventId == 10) {
 			if (knight->knightType == DRAGON || (knight->hp == knight->maxhp && knight->level == 10))
 				return 1;
 		}
+		return 0;
 	}
-	if (opponent->eventId == 7) {
+	if (opponent->eventId == 11) {
 		if (knight->level == 10 || (knight->level >= 8 && knight->knightType == PALADIN))
 			return 1;
-	}	return knight->level >= opponent->levelO();
+		return 0;
+	}	return knight->level >= opponent->levelO();
 }
 
 void ArmyKnights::itemOverflow(BaseItem* item, int index) {
 	BaseKnight* knight = knights[index];
 	if (index == -1) return;
-	if (knight->bag->insertFirst(item)) {
+
+	bool inserted = knight->bag->insertFirst(item);
+	//log("Picked");
+	//log(inserted);
+	if (inserted) {
 		return;
 	}
 	itemOverflow(item, index - 1);
@@ -468,7 +481,7 @@ void ArmyKnights::heal() {
 	return;
 }
 void ArmyKnights::pop() {
-	if (current >= 0) {
+	if (current > 0) {
 		current--;
 	}
 }
@@ -735,6 +748,8 @@ void KnightAdventure::run() {
 bool ArmyKnights::adventure(Events* events) {
 	fto(i, 0, events->count() - 1) {
 		int eventId = events->get(i);
+		//log(eventId);
+		//log(lastKnight()->bag->capacity);
 		BaseOpponent* opponent = BaseOpponent::create(eventId, i);
 
 		if (eventId == 99) {
@@ -780,25 +795,42 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 	return 1;
 }
 
-
 bool ArmyKnights::fightUltimecia() {
 	int boss_hp = 5000;
 	if (hasExcaliburSword()) return 1;
 	if (!hasPaladinShield() || !hasLancelotSpear() && !hasGuinevereHair())
 		return 0;
 
-	while (count() > 0 && boss_hp > 0) {
+	while (current > 0 && boss_hp > 0) {
 		BaseKnight* knight = lastKnight();
+
 		int damage = knight->knightBaseDamage * knight->level * knight->hp;
 
 		boss_hp -= damage;
 
 		if (boss_hp > 0) {
-			knight->hp = 0;
 			pop();
+			//log(knight->knightType);
+			
+			//lazy hack
+			if (knight->knightType == NORMAL) {
+				//log(knight->knightType);
+				//log(string(10, '-'));
+				skippedKnight++;
+				if (UltimeciaLastKnight == nullptr) {
+					UltimeciaLastKnight = knight;
+				}
+				continue;
+			}
+			//
+
+			knight->hp = 0;
 		}
 	}
-
-	if (boss_hp <= 0) return 1; else return 0;
+	if (boss_hp <= 0) {
+		printingResult = 1;
+		return 1;
+	}
+	else return 0;
 }
 /* * * END implementation of class KnightAdventure * * */

@@ -4,8 +4,8 @@
 #include "main.h"
 
 // #define DEBUG
-enum KnightType { PALADIN = 0, LANCELOT, DRAGON, NORMAL };
-enum ItemType { ANTIDOTE = 0, PHOENIXDOWNI, PHOENIXDOWNII, PHOENIXDOWNIII, PHOENIXDOWNIV };
+enum KnightType { PALADIN = 0, LANCELOT, DRAGON, NORMAL};
+enum ItemType { ANTIDOTE = 0, PHOENIXDOWNI, PHOENIXDOWNII, PHOENIXDOWNIII, PHOENIXDOWNIV};
 enum Treasure { PALADINSHIELD = 0, LANCELOTSPEAR, GUINEVEREHAIR, EXCALIBUR , NOPE};
 
 class BaseItem; //Forward declaration
@@ -15,11 +15,12 @@ class ArmyKnights;
 class BaseBag {
 protected:
 //public:*
-    int capacity = 0;
     int currentSize = 0;
     BaseItem* itemListHead = nullptr;
 
 public:
+    int capacity = 0;
+
     virtual ~BaseBag();
 
     virtual int count() const;
@@ -344,9 +345,12 @@ public:
 class ArmyKnights {
 private:
     int size = 0;
-    int current = -1;
+    int current = 0;
     BaseKnight** knights = nullptr;
-    
+
+    bool printingResult = 0;
+    int skippedKnight = 0;
+    BaseKnight* UltimeciaLastKnight = nullptr;
 
 public:
     int TreasureChecklist[5];
