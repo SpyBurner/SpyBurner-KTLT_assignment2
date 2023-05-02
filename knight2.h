@@ -193,7 +193,6 @@ public:
     virtual ~BaseOpponent();
 
     int baseDamage = 0;
-    int forceDamage = 0;
 
     int evil = 1;
 
@@ -259,7 +258,6 @@ public:
     Tornbery() {
         eventId = 6;
         rewardLevel = 1;
-        forceDamage = 10;
     } 
 };
 class QueenOfCards : public BaseOpponent {
@@ -377,6 +375,7 @@ public:
     void pop();
 
     bool fight(BaseOpponent* opponent);
+
     bool fightUltimecia();
     
 };

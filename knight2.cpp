@@ -98,9 +98,7 @@ BaseItem* BaseBag::get(ItemType itemType) {
 BaseItem* BaseBag::getPhoenixDown(BaseKnight* knight) {
 	if (count() <= 0) return nullptr;
 	BaseItem* item = itemListHead->next;
-	int cnt = 0;
 	while (item != nullptr) {
-		cnt++;
 		if (PHOENIXDOWNI <= item->itemType && item->itemType <= PHOENIXDOWNIV && item->canUse(knight)) {
 			break;
 		}
@@ -393,7 +391,6 @@ bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponen
 	BaseKnight* knight = lastKnight();	if (knight->knightType == PALADIN || knight->knightType == LANCELOT) {
 		
 		if (1 <= opponent->eventId && opponent->eventId <= 5) {
-			
 			return 1;
 		}
 	}
@@ -403,13 +400,10 @@ bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponen
 			if (knight->knightType == DRAGON || (knight->hp == knight->maxhp && knight->level == 10))
 				return 1;
 		}
-			
-		return 0;
 	}
 	if (opponent->eventId == 7) {
 		if (knight->level == 10 || (knight->level >= 8 && knight->knightType == PALADIN))
 			return 1;
-		return 0;
 	}	return knight->level >= opponent->levelO();
 }
 
@@ -440,6 +434,9 @@ void ArmyKnights::reward(ArmyKnights* armyknight, BaseOpponent* opponent) {
 	knight->gil += opponent->rewardGil;
 	knight->level += opponent->rewardLevel;
 
+	knight->gil = min(knight->gil, 999);
+	knight->level = min(knight->level, 10);
+
 	opponent->specialReward(armyknight);
 }
 void ArmyKnights::punish(ArmyKnights* armyknight, BaseOpponent* opponent) {
@@ -447,7 +444,6 @@ void ArmyKnights::punish(ArmyKnights* armyknight, BaseOpponent* opponent) {
 	BaseKnight* knight = armyknight->lastKnight();
 
 	int damage = opponent->baseDamage * (opponent->levelO() - knight->level);
-	if (opponent->forceDamage != 0) damage = opponent->forceDamage;
 	knight->hp -= damage;
 
 	opponent->specialPunish(armyknight);
@@ -461,6 +457,8 @@ void ArmyKnights::heal() {
 		lastKnight()->bag->erase(item);
 		return;
 	}
+
+	if (knight->hp > 0) return;
 
 	if (knight->gil >= 100) {
 		knight->gil -= 100;
@@ -567,6 +565,14 @@ void Tornbery::specialPunish(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
 
 	if (knight->knightType == DRAGON) return;
+
+	BaseItem* antidote = knight->bag->get(ANTIDOTE);
+	if (antidote != nullptr) {
+		knight->bag->erase(antidote);
+		return;
+	}
+
+	knight->hp -= 10;
 
 	knight->bag->dropItem();
 	knight->bag->dropItem();
@@ -754,13 +760,12 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 	BaseKnight* knight = lastKnight();
 
 	if (opponent->ignore) return 1;
-
+	//log(eventid);
 	//log("win = " + to_string(DetermineWinner(this, opponent)));
 	if (DetermineWinner(this, opponent)) {
 		reward(this, opponent);
 
 		opponent->ignoreNextTime();
-		knight->gil = min(knight->gil, 999);
 	}
 	else {
 		punish(this, opponent);
@@ -775,6 +780,7 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 	return 1;
 }
 
+
 bool ArmyKnights::fightUltimecia() {
 	int boss_hp = 5000;
 	if (hasExcaliburSword()) return 1;
@@ -787,7 +793,10 @@ bool ArmyKnights::fightUltimecia() {
 
 		boss_hp -= damage;
 
-		if (boss_hp > 0) pop();
+		if (boss_hp > 0) {
+			knight->hp = 0;
+			pop();
+		}
 	}
 
 	if (boss_hp <= 0) return 1; else return 0;
