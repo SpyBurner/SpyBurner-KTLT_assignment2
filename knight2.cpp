@@ -52,8 +52,24 @@ BaseBag::~BaseBag() {
 	}
 }
 
-int BaseBag::count() {
-	return currentSize;
+void BaseBag::print() {
+	BaseItem* ptr = itemListHead->next;
+	while (ptr != nullptr) {
+		cout << ptr->itemType << " ";
+		ptr = ptr->next;
+	}
+	cout << endl;
+}
+
+int BaseBag::count() const{
+	//return currentSize;
+	BaseItem* ptr = itemListHead->next;
+	int cnt = 0;
+	while (ptr != nullptr) {
+		cnt++;
+		ptr = ptr->next;
+	}
+	return cnt;
 }
 
 bool BaseBag::insertFirst(BaseItem* item) {
@@ -81,13 +97,15 @@ BaseItem* BaseBag::get(ItemType itemType) {
 BaseItem* BaseBag::getPhoenixDown(BaseKnight* knight) {
 	if (count() <= 0) return nullptr;
 	BaseItem* item = itemListHead->next;
+	int cnt = 0;
 	while (item != nullptr) {
+		cnt++;
 		if (PHOENIXDOWNI <= item->itemType && item->itemType <= PHOENIXDOWNIV && item->canUse(knight)) {
 			break;
 		}
 		item = item->next;
 	}
-	return item;
+	return item; //Return nullptr if not found
 }
 
 void BaseBag::erase(BaseItem* item) {
@@ -101,17 +119,20 @@ void BaseBag::erase(BaseItem* item) {
 
 	if (itemPtr == nullptr) return;
 
-	if (preItem != itemListHead) {
-		preItem->next = itemListHead->next;
-		BaseItem* temp = itemListHead->next->next;
-		itemListHead->next->next = itemPtr->next;
-		itemPtr->next = temp;
-		itemListHead->next = itemPtr;
-	}
+	BaseItem* item1 = itemListHead->next;
+	BaseItem* item2 = itemPtr;
+	
+	BaseItem* temp = item1->next;
+	item1->next = item2->next;
+	item2->next = temp;
+
+	itemListHead->next = item2;
+	preItem->next = item1;
 
 	itemListHead->next = itemPtr->next;
-	
+
 	delete itemPtr;
+	itemPtr = nullptr;
 	currentSize--;
 }
 
@@ -119,15 +140,13 @@ string BaseBag::toString() const {
 	string typeString[] = { "ANTIDOTE", "PHOENIXDOWNI", "PHOENIXDOWNII", "PHOENIXDOWNIII", "PHOENIXDOWNIV" };
 
 	string s = "";
-	s += "Bag[count=" + to_string(currentSize) + ";";
+	s += "Bag[count=" + to_string(count()) + ";";
 
 	if (currentSize != 0) {
 		BaseItem* ptr = itemListHead->next;
 		while (ptr != nullptr) {
-			log(int(ptr->itemType));
 			s += typeString[int(ptr->itemType)];
 			ptr = ptr->next;
-
 			if (ptr != nullptr) s += ",";
 		}
 	}
@@ -160,7 +179,7 @@ BaseItem::~BaseItem() {
 }
 
 bool Antidote::canUse(BaseKnight* knight) {
-	return knight->hp < int(knight->maxhp / 4);
+	return 1;
 }
 void Antidote::use(BaseKnight* knight) {
 	knight->hp = knight->maxhp;
@@ -706,6 +725,20 @@ bool ArmyKnights::adventure(Events* events) {
 		printInfo();
 		delete opponent;
 	}
+
+
+	//log
+	BaseKnight* knight = lastKnight();
+
+	knight->bag->print();
+	knight->hp = 0;
+	BaseItem* phoe = knight->bag->getPhoenixDown(knight);
+
+	knight->bag->erase(phoe);
+	knight->bag->print();
+	//
+
+
 	return 0;//DECOY
 }
 

@@ -22,7 +22,9 @@ protected:
 public:
     virtual ~BaseBag();
 
-    virtual int count();
+    virtual int count() const;
+
+    void print();
 
     virtual bool insertFirst(BaseItem* item);
     virtual BaseItem* get(ItemType itemType);
@@ -117,6 +119,8 @@ class BaseItem {
 public:
     BaseItem* next = nullptr;
     ItemType itemType = ANTIDOTE;
+
+    int id = 0;
 
     virtual ~BaseItem();
 
