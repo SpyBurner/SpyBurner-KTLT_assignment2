@@ -384,11 +384,10 @@ void ArmyKnights::printResult(bool win) const {
 }
 
 int ArmyKnights::count() const {
-	//log(skippedKnight);
-	//log(current);
 	return current + ((printingResult)? skippedKnight : 0);
 }
 BaseKnight* ArmyKnights::lastKnight() const {
+	//log(current);
 	if (current <= 0) return nullptr;
 	if (UltimeciaLastKnight != nullptr && printingResult) return UltimeciaLastKnight;
 	return knights[current];
@@ -796,8 +795,11 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 bool ArmyKnights::fightUltimecia() {
 	int boss_hp = 5000;
 	if (hasExcaliburSword()) return 1;
-	if (!hasPaladinShield() || !hasLancelotSpear() && !hasGuinevereHair())
+	if (!hasPaladinShield() || !hasLancelotSpear() && !hasGuinevereHair()) {
+		current = 0;
 		return 0;
+	}
+		
 
 	while (current > 0 && boss_hp > 0) {
 		BaseKnight* knight = lastKnight();
