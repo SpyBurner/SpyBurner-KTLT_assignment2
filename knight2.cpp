@@ -758,9 +758,6 @@ bool ArmyKnights::adventure(Events* events) {
 
 		if (opponent != nullptr) {
 			bool win = fight(opponent);
-			if (!win) {
-				pop();
-			}
 		}
 
 		printInfo();
@@ -788,7 +785,8 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 			heal();
 		}
 		if (knight->hp <= 0) {
-			return 0;
+			pop();
+			return fight(opponent);	
 		}
 	}
 
