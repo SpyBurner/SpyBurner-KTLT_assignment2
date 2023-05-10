@@ -607,6 +607,7 @@ void NinaDeRings::specialReward(ArmyKnights* armyknight) {
 		if (knight->knightType == PALADIN)
 			knight->gil += 50;
 	}
+	knight->hp = min(knight->hp, knight->maxhp);
 }
 
 void DurianGarden::specialReward(ArmyKnights* armyknight) {
