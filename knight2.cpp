@@ -735,11 +735,13 @@ KnightAdventure::~KnightAdventure() {
 //Main stuffs
 void KnightAdventure::run() {
 	bool result = armyKnights->adventure(events);
-	armyKnights->printInfo();
 	armyKnights->printResult(result);
 }
 
 bool ArmyKnights::adventure(Events* events) {
+
+	bool res = 0;
+
 	fto(i, 0, events->count() - 1) {
 		int eventId = events->get(i);
 		//log(eventId);
@@ -748,9 +750,9 @@ bool ArmyKnights::adventure(Events* events) {
 		BaseOpponent* opponent = BaseOpponent::create(eventId, i);
 
 		if (eventId == 99) {
-			return fightUltimecia();
+			res = fightUltimecia();
 		}
-
+		else
 		if (opponent != nullptr) {
 			bool win = fight(opponent);
 		}
@@ -759,12 +761,14 @@ bool ArmyKnights::adventure(Events* events) {
 		delete opponent;
 	}
 
-	return 0;//DECOY
+	return res;//DECOY
 }
 
 bool ArmyKnights::fight(BaseOpponent* opponent) {
 	int eventid = opponent->eventId;
 	BaseKnight* knight = lastKnight();
+
+	if (knight == nullptr) return 0;
 
 	if (opponent->ignore) return 1;
 	//log(eventid);
