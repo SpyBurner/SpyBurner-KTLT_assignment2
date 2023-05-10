@@ -740,7 +740,7 @@ void KnightAdventure::run() {
 
 bool ArmyKnights::adventure(Events* events) {
 
-	bool res = 0;
+	bool res = 1;
 
 	fto(i, 0, events->count() - 1) {
 		int eventId = events->get(i);
@@ -760,6 +760,8 @@ bool ArmyKnights::adventure(Events* events) {
 		printInfo();
 		delete opponent;
 	}
+
+	if (count() <= 0) res = 0;
 
 	return res;//DECOY
 }
