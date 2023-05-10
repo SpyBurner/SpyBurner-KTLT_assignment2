@@ -349,7 +349,6 @@ ArmyKnights::~ArmyKnights() {
 		delete knights[i];
 	}
 	delete[] knights;
-
 }
 //
 
@@ -401,11 +400,8 @@ bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponen
 		}
 	}
 	if (opponent->eventId == 10) {
-
-		if (opponent->eventId == 10) {
-			if (knight->knightType == DRAGON || (knight->hp == knight->maxhp && knight->level == 10))
-				return 1;
-		}
+		if (knight->knightType == DRAGON || (knight->hp == knight->maxhp && knight->level == 10))
+			return 1;
 		return 0;
 	}
 	if (opponent->eventId == 11) {
@@ -429,9 +425,8 @@ void ArmyKnights::itemOverflow(BaseItem* item, int index) {
 }
 
 void ArmyKnights::gilOverflow(int amount, int index) {
-	if (amount <= 0 || index == -1) return;
+	if (amount <= 0 || index == 0) return;
 	BaseKnight* knight = knights[index];
-
 	knight->gil += amount;
 	amount = knight->gil - 999;
 	knight->gil = min(knight->gil, 999);
@@ -585,7 +580,6 @@ void Tornbery::specialPunish(ArmyKnights* armyknight) {
 	}
 
 	knight->hp -= 10;
-
 	knight->bag->dropItem();
 	knight->bag->dropItem();
 	knight->bag->dropItem();
@@ -749,6 +743,7 @@ bool ArmyKnights::adventure(Events* events) {
 		int eventId = events->get(i);
 		//log(eventId);
 		//log(lastKnight()->bag->capacity);
+
 		BaseOpponent* opponent = BaseOpponent::create(eventId, i);
 
 		if (eventId == 99) {
@@ -794,7 +789,10 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 
 bool ArmyKnights::fightUltimecia() {
 	int boss_hp = 5000;
-	if (hasExcaliburSword()) return 1;
+	if (hasExcaliburSword()) {
+		printingResult = 1;
+		return 1;
+	}
 	if (!hasPaladinShield() || !hasLancelotSpear() && !hasGuinevereHair()) {
 		current = 0;
 		return 0;
