@@ -6,8 +6,8 @@
 #define log(st) cout << st << endl
 
 //STATICS HERE
-int OmegaWeapon::ignore = 0;
-int Hades::ignore = 0;
+bool OmegaWeapon::ignore = 0;
+bool Hades::ignore = 0;
 //
 
 //NO CLASS FUNCTIONS
@@ -393,7 +393,8 @@ BaseKnight* ArmyKnights::lastKnight() const {
 }
 
 bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponent) {
-	BaseKnight* knight = lastKnight();	if (knight->knightType == PALADIN || knight->knightType == LANCELOT) {
+	BaseKnight* knight = lastKnight();
+	if (knight->knightType == PALADIN || knight->knightType == LANCELOT) {
 		
 		if (1 <= opponent->eventId && opponent->eventId <= 5) {
 			return 1;
@@ -408,7 +409,9 @@ bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponen
 		if (knight->level == 10 || (knight->level >= 8 && knight->knightType == PALADIN))
 			return 1;
 		return 0;
-	}	return knight->level >= opponent->levelO();
+	}
+
+	return knight->level >= opponent->levelO();
 }
 
 void ArmyKnights::itemOverflow(BaseItem* item, int index) {
@@ -567,6 +570,9 @@ void BaseOpponent::specialPunish(ArmyKnights* armyknight) {
 void BaseOpponent::ignoreNextTime() {
 
 }
+bool BaseOpponent::checkIgnore() {
+	return 0;
+}
 
 void Tornbery::specialPunish(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
@@ -629,6 +635,9 @@ void OmegaWeapon::specialPunish(ArmyKnights* armyknight) {
 void OmegaWeapon::ignoreNextTime() {
 	OmegaWeapon::ignore = 1;
 }
+bool OmegaWeapon::checkIgnore() {
+	return OmegaWeapon::ignore;
+}
 
 void Hades::specialReward(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
@@ -642,6 +651,9 @@ void Hades::specialPunish(ArmyKnights* armyknight) {
 }
 void Hades::ignoreNextTime() {
 	Hades::ignore = 1;
+}
+bool Hades::checkIgnore() {
+	return Hades::ignore;
 }
 
 void PickPhoenixDown::specialReward(ArmyKnights* armyknight) {
@@ -759,9 +771,12 @@ bool ArmyKnights::adventure(Events* events) {
 
 		printInfo();
 		delete opponent;
-	}
 
-	if (count() <= 0) res = 0;
+		if (count() <= 0) {
+			res = 0;
+			break;
+		}
+	}
 
 	return res;//DECOY
 }
@@ -772,7 +787,7 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 
 	if (knight == nullptr) return 0;
 
-	if (opponent->ignore) return 1;
+	if (opponent->checkIgnore()) return 1;
 	//log(eventid);
 	//log("win = " + to_string(DetermineWinner(this, opponent)));
 	if (DetermineWinner(this, opponent)) {
@@ -787,7 +802,7 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 		}
 		if (knight->hp <= 0) {
 			pop();
-			return fight(opponent);	
+			return 0;
 		}
 	}
 

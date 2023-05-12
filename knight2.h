@@ -197,7 +197,6 @@ public:
 
     int evil = 1;
 
-    int ignore = 0;//CHANGE TO STATIC IN SOME CLASSES
     int eventId = 0;
     int index = 0;
     int levelO();
@@ -209,6 +208,7 @@ public:
     virtual void specialReward(ArmyKnights* armyknight);
     virtual void specialPunish(ArmyKnights* armyknight);
     virtual void ignoreNextTime();
+    virtual bool checkIgnore();
 };
 
 class MadBear : public BaseOpponent {
@@ -289,23 +289,25 @@ class OmegaWeapon : public BaseOpponent {
     void specialReward(ArmyKnights* armyknight) override;
     void specialPunish(ArmyKnights* armyknight) override;
 
-    static int ignore;
+    static bool ignore;
     void ignoreNextTime() override;
 public:
     OmegaWeapon() {
         eventId = 10;
     }
+    bool checkIgnore();
 };
 class Hades : public BaseOpponent {
     void specialReward(ArmyKnights* armyknight) override;
     void specialPunish(ArmyKnights* armyknight) override;
 
-    static int ignore;
+    static bool ignore;
     void ignoreNextTime() override;
 public:
     Hades() {
         eventId = 11;
     }
+    bool checkIgnore();
 };
 class PickPhoenixDown : public BaseOpponent {
     void specialReward(ArmyKnights* armyknight) override;
