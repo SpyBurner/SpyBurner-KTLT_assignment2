@@ -6,7 +6,7 @@
 // #define DEBUG
 enum KnightType { PALADIN = 0, LANCELOT, DRAGON, NORMAL};
 enum ItemType { ANTIDOTE = 0, PHOENIXDOWNI, PHOENIXDOWNII, PHOENIXDOWNIII, PHOENIXDOWNIV};
-enum Treasure { PALADINSHIELD = 0, LANCELOTSPEAR, GUINEVEREHAIR, EXCALIBUR , NOPE};
+enum Treasure { PALADINSHIELD = 0, LANCELOTSPEAR, GUINEVEREHAIR, EXCALIBUR};
 
 class BaseItem; //Forward declaration
 class BaseKnight;
@@ -70,12 +70,11 @@ public:
 class BaseOpponent;
 
 class BaseKnight {
-//protected:
-public:
+protected:
+//public:
     int id = 0;
     int hp = 0;
     int maxhp = 0;
-    double knightBaseDamage = 0;
     int level = 0;
     int gil = 0;
     int antidote = 0;
@@ -84,10 +83,22 @@ public:
     KnightType knightType = NORMAL;
 
 public:
-    virtual ~BaseKnight();
+    double knightBaseDamage = 0;
+
+    ~BaseKnight();
 
     static BaseKnight * create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI);
     string toString() const;
+
+    //To counter the protected stuffs ;-;
+    int& hpAccess();
+    int& maxhpAccess();
+    int& levelAccess();
+    int& gilAccess();
+    KnightType getKnightType();
+
+    BaseBag* getBag();
+    void heal();
 };
 
 /// <Custom knights
@@ -374,8 +385,8 @@ public:
     bool DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponent);
     void itemOverflow(BaseItem* item, int index);
     void gilOverflow(int amount, int index);
-    void reward(ArmyKnights* armyknight, BaseOpponent* opponent);
-    void punish(ArmyKnights* armyknight, BaseOpponent* opponent);
+    void reward(BaseOpponent* opponent);
+    void punish(BaseOpponent* opponent);
 
     void heal();
     void pop();

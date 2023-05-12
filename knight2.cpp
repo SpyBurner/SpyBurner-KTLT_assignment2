@@ -204,49 +204,49 @@ bool Antidote::canUse(BaseKnight* knight) {
 	return 1;
 }
 void Antidote::use(BaseKnight* knight) {
-	knight->hp = knight->maxhp;
+	knight->hpAccess() = knight->maxhpAccess();
 
-	knight->hp = min(knight->hp, knight->maxhp);
+	knight->hpAccess() = min(knight->hpAccess(), knight->maxhpAccess());
 }
 
 bool PhoenixdownI::canUse(BaseKnight* knight) {
-	return knight->hp <= 0;
+	return knight->hpAccess() <= 0;
 }
 void PhoenixdownI::use(BaseKnight* knight) {
-	knight->hp = knight->maxhp;
+	knight->hpAccess() = knight->maxhpAccess();
 }
 
 bool PhoenixdownII::canUse(BaseKnight* knight) {
-	return knight->hp < int(knight->maxhp / 4);
+	return knight->hpAccess() < int(knight->maxhpAccess() / 4);
 }
 void PhoenixdownII::use(BaseKnight* knight) {
-	knight->hp = knight->maxhp;
+	knight->hpAccess() = knight->maxhpAccess();
 
-	knight->hp = min(knight->hp, knight->maxhp);
+	knight->hpAccess() = min(knight->hpAccess(), knight->maxhpAccess());
 }
 
 bool PhoenixdownIII::canUse(BaseKnight* knight) {
-	return knight->hp < int(knight->maxhp / 3);
+	return knight->hpAccess() < int(knight->maxhpAccess() / 3);
 }
 void PhoenixdownIII::use(BaseKnight* knight) {
-	if (knight->hp <= 0) knight->hp = knight->maxhp / 3;
+	if (knight->hpAccess() <= 0) knight->hpAccess() = knight->maxhpAccess() / 3;
 	else {
-		knight->hp += knight->maxhp / 4;
+		knight->hpAccess() += knight->maxhpAccess() / 4;
 	}
 
-	knight->hp = min(knight->hp, knight->maxhp);
+	knight->hpAccess() = min(knight->hpAccess(), knight->maxhpAccess());
 }
 
 bool PhoenixdownIV::canUse(BaseKnight* knight) {
-	return knight->hp < int(knight->maxhp / 2);
+	return knight->hpAccess() < int(knight->maxhpAccess() / 2);
 }
 void PhoenixdownIV::use(BaseKnight* knight) {
-	if (knight->hp <= 0) knight->hp = knight->maxhp / 2;
+	if (knight->hpAccess() <= 0) knight->hpAccess() = knight->maxhpAccess() / 2;
 	else {
-		knight->hp += knight->maxhp / 5;
+		knight->hpAccess() += knight->maxhpAccess() / 5;
 	}
 
-	knight->hp = min(knight->hp, knight->maxhp);
+	knight->hpAccess() = min(knight->hpAccess(), knight->maxhpAccess());
 }
 
 /* * * END implementation of class BaseItem * * */
@@ -316,6 +316,42 @@ BaseKnight* BaseKnight::create(int id, int maxhp, int level, int gil, int antido
 	return res;
 }
 
+
+int& BaseKnight::hpAccess() {
+	return hp;
+}
+int& BaseKnight::maxhpAccess() {
+	return maxhp;
+}
+int& BaseKnight::levelAccess() {
+	return level;
+}
+int& BaseKnight::gilAccess() {
+	return gil;
+}
+KnightType BaseKnight::getKnightType() {
+	return knightType;
+}
+BaseBag* BaseKnight::getBag() {
+	return bag;
+}
+void BaseKnight::heal() {
+	BaseItem* item = bag->getPhoenixDown(this);
+	if (item != nullptr) {
+		item->use(this);
+		bag->erase(item);
+		return;
+	}
+
+	if (hp > 0) return;
+
+	if (gil >= 100) {
+		gil -= 100;
+		hp = maxhp / 2;
+	}
+
+	return;
+}
 /* * * END implementation of class BaseKnight * * */
 
 /* * * BEGIN implementation of class ArmyKnights * * */
@@ -394,31 +430,31 @@ BaseKnight* ArmyKnights::lastKnight() const {
 
 bool ArmyKnights::DetermineWinner(ArmyKnights* armyknight, BaseOpponent* opponent) {
 	BaseKnight* knight = lastKnight();
-	if (knight->knightType == PALADIN || knight->knightType == LANCELOT) {
+	if (knight->getKnightType() == PALADIN || knight->getKnightType() == LANCELOT) {
 		
 		if (1 <= opponent->eventId && opponent->eventId <= 5) {
 			return 1;
 		}
 	}
 	if (opponent->eventId == 10) {
-		if (knight->knightType == DRAGON || (knight->hp == knight->maxhp && knight->level == 10))
+		if (knight->getKnightType() == DRAGON || (knight->hpAccess() == knight->maxhpAccess() && knight->levelAccess() == 10))
 			return 1;
 		return 0;
 	}
 	if (opponent->eventId == 11) {
-		if (knight->level == 10 || (knight->level >= 8 && knight->knightType == PALADIN))
+		if (knight->levelAccess() == 10 || (knight->levelAccess() >= 8 && knight->getKnightType() == PALADIN))
 			return 1;
 		return 0;
 	}
 
-	return knight->level >= opponent->levelO();
+	return knight->levelAccess() >= opponent->levelO();
 }
 
 void ArmyKnights::itemOverflow(BaseItem* item, int index) {
 	BaseKnight* knight = knights[index];
 	if (index == -1) return;
 
-	bool inserted = knight->bag->insertFirst(item);
+	bool inserted = knight->getBag()->insertFirst(item);
 	//log("Picked");
 	//log(inserted);
 	if (inserted) {
@@ -429,54 +465,40 @@ void ArmyKnights::itemOverflow(BaseItem* item, int index) {
 
 void ArmyKnights::gilOverflow(int amount, int index) {
 	if (amount <= 0 || index == 0) return;
-	BaseKnight* knight = knights[index];
-	knight->gil += amount;
-	amount = knight->gil - 999;
-	knight->gil = min(knight->gil, 999);
+	int* gil = &(knights[index]->gilAccess());
+	*gil += amount;
+	amount = *gil - 999;
+	*gil = min(*gil, 999);
 	gilOverflow(amount, index - 1);
 }
 
-void ArmyKnights::reward(ArmyKnights* armyknight, BaseOpponent* opponent) {
+void ArmyKnights::reward(BaseOpponent* opponent) {
 	
 	int eventid = opponent->eventId;
-	BaseKnight* knight = armyknight->lastKnight();
-
-	knight->gil += opponent->rewardGil;
-	knight->level += opponent->rewardLevel;
-
-	knight->gil = min(knight->gil, 999);
-	knight->level = min(knight->level, 10);
-
-	opponent->specialReward(armyknight);
-}
-void ArmyKnights::punish(ArmyKnights* armyknight, BaseOpponent* opponent) {
-	int eventid = opponent->eventId;
-	BaseKnight* knight = armyknight->lastKnight();
-
-	int damage = opponent->baseDamage * (opponent->levelO() - knight->level);
-	knight->hp -= damage;
-
-	opponent->specialPunish(armyknight);
-}
-
-void ArmyKnights::heal() {
 	BaseKnight* knight = lastKnight();
-	BaseItem* item = knight->bag->getPhoenixDown(lastKnight());
-	if (item != nullptr) {
-		item->use(lastKnight());
-		lastKnight()->bag->erase(item);
-		return;
-	}
 
-	if (knight->hp > 0) return;
+	int *gil, *level;
+	gil = &(knight->gilAccess());
+	level = &(knight->levelAccess());
 
-	if (knight->gil >= 100) {
-		knight->gil -= 100;
-		knight->hp = knight->maxhp / 2;
-	}
+	*gil += opponent->rewardGil;
+	*level += opponent->rewardLevel;
 
-	return;
+	*gil = min(*gil, 999);
+	*level = min(*level, 10);
+
+	opponent->specialReward(this);
 }
+void ArmyKnights::punish(BaseOpponent* opponent) {
+	int eventid = opponent->eventId;
+	BaseKnight* knight = lastKnight();
+
+	int damage = opponent->baseDamage * (opponent->levelO() - knight->levelAccess());
+	knight->hpAccess() -= damage;
+
+	opponent->specialPunish(this);
+}
+
 void ArmyKnights::pop() {
 	if (current > 0) {
 		current--;
@@ -577,60 +599,60 @@ bool BaseOpponent::checkIgnore() {
 void Tornbery::specialPunish(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
 
-	if (knight->knightType == DRAGON) return;
+	if (knight->getKnightType()  == DRAGON) return;
 
-	BaseItem* antidote = knight->bag->get(ANTIDOTE);
+	BaseItem* antidote = knight->getBag()->get(ANTIDOTE);
 	if (antidote != nullptr) {
-		knight->bag->erase(antidote);
+		knight->getBag()->erase(antidote);
 		return;
 	}
 
-	knight->hp -= 10;
-	knight->bag->dropItem();
-	knight->bag->dropItem();
-	knight->bag->dropItem();
+	knight->hpAccess() -= 10;
+	knight->getBag()->dropItem();
+	knight->getBag()->dropItem();
+	knight->getBag()->dropItem();
 }
 
 void QueenOfCards::specialReward(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
 
-	armyknight->gilOverflow(knight->gil, armyknight->count());
+	armyknight->gilOverflow(knight->gilAccess(), armyknight->count());
 }
 void QueenOfCards::specialPunish(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
 
-	if (knight->knightType == PALADIN) return;
+	if (knight->getKnightType() == PALADIN) return;
 
-	knight->gil = knight->gil / 2;
+	knight->gilAccess() = knight->gilAccess() / 2;
 }
 
 void NinaDeRings::specialReward(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
 
-	if ((knight->gil >= 50 && knight->hp < knight->maxhp / 3) || knight->knightType == PALADIN) {
-		knight->gil -= 50;
-		knight->hp += knight->maxhp / 5;
-		if (knight->knightType == PALADIN)
-			knight->gil += 50;
+	if ((knight->gilAccess() >= 50 && knight->hpAccess() < knight->maxhpAccess() / 3) || knight->getKnightType() == PALADIN) {
+		knight->gilAccess() -= 50;
+		knight->hpAccess() += knight->maxhpAccess() / 5;
+		if (knight->getKnightType() == PALADIN)
+			knight->gilAccess() += 50;
 	}
-	knight->hp = min(knight->hp, knight->maxhp);
+	knight->hpAccess() = min(knight->hpAccess(), knight->maxhpAccess());
 }
 
 void DurianGarden::specialReward(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
-	knight->hp = knight->maxhp;
+	knight->hpAccess() = knight->maxhpAccess();
 }
 
 void OmegaWeapon::specialReward(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
 
-	knight->level = 10;
-	knight->gil = 999;
+	knight->levelAccess() = 10;
+	knight->gilAccess() = 999;
 }
 void OmegaWeapon::specialPunish(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
 
-	knight->hp = 0;
+	knight->hpAccess() = 0;
 }
 void OmegaWeapon::ignoreNextTime() {
 	OmegaWeapon::ignore = 1;
@@ -647,7 +669,7 @@ void Hades::specialReward(ArmyKnights* armyknight) {
 void Hades::specialPunish(ArmyKnights* armyknight) {
 	BaseKnight* knight = armyknight->lastKnight();
 
-	knight->hp = 0;
+	knight->hpAccess() = 0;
 }
 void Hades::ignoreNextTime() {
 	Hades::ignore = 1;
@@ -675,7 +697,6 @@ void PickPhoenixDown::specialReward(ArmyKnights* armyknight) {
 	armyknight->itemOverflow(item, armyknight->count());
 }
 void PickTreasure::specialReward(ArmyKnights* armyknight) {
-	BaseItem* item = nullptr;
 	switch (eventId) {
 	case 95:
 		armyknight->TreasureChecklist[PALADINSHIELD] = 1;
@@ -791,16 +812,16 @@ bool ArmyKnights::fight(BaseOpponent* opponent) {
 	//log(eventid);
 	//log("win = " + to_string(DetermineWinner(this, opponent)));
 	if (DetermineWinner(this, opponent)) {
-		reward(this, opponent);
+		reward(opponent);
 
 		opponent->ignoreNextTime();
 	}
 	else {
-		punish(this, opponent);
-		if (knight->hp < knight->maxhp) {
-			heal();
+		punish(opponent);
+		if (knight->hpAccess() < knight->maxhpAccess()) {
+			knight->heal();
 		}
-		if (knight->hp <= 0) {
+		if (knight->hpAccess() <= 0) {
 			pop();
 			return 0;
 		}
@@ -824,7 +845,7 @@ bool ArmyKnights::fightUltimecia() {
 	while (current > 0 && boss_hp > 0) {
 		BaseKnight* knight = lastKnight();
 
-		int damage = knight->knightBaseDamage * knight->level * knight->hp;
+		int damage = knight->knightBaseDamage * knight->levelAccess() * knight->hpAccess();
 
 		boss_hp -= damage;
 
@@ -833,7 +854,7 @@ bool ArmyKnights::fightUltimecia() {
 			//log(knight->knightType);
 			
 			//lazy hack
-			if (knight->knightType == NORMAL) {
+			if (knight->getKnightType() == NORMAL) {
 				//log(knight->knightType);
 				//log(string(10, '-'));
 				skippedKnight++;
@@ -844,7 +865,7 @@ bool ArmyKnights::fightUltimecia() {
 			}
 			//
 
-			knight->hp = 0;
+			knight->hpAccess() = 0;
 		}
 	}
 	if (boss_hp <= 0) {
