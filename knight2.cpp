@@ -378,6 +378,8 @@ ArmyKnights::ArmyKnights(const string& file_armyknights) {
 	//fto(id, 1, n) {
 	//    cout << knights[id]->toString() << endl;
 	//}
+
+	inFile.close();
 }
 
 ArmyKnights::~ArmyKnights() {
@@ -385,6 +387,8 @@ ArmyKnights::~ArmyKnights() {
 		delete knights[i];
 	}
 	delete[] knights;
+	knights = nullptr;
+	UltimeciaLastKnight = nullptr;
 }
 //
 
@@ -726,6 +730,8 @@ Events::Events(const string& file_events) {
 	fto(i, 0, e - 1) {
 		inFile >> eventList[i];
 	}
+
+	inFile.close();
 }
 Events::~Events() {
 	delete[] eventList;

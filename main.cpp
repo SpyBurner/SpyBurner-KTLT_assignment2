@@ -1,6 +1,8 @@
 #include "knight2.h"
-
+#include <crtdbg.h>
 int main(int argc, char ** argv) {
+    _crtBreakAlloc = 227;
+
     string file_armyknights, file_events;
     if (argc == 1) {
         file_armyknights = "tc1_armyknights"; // hard-code
@@ -23,5 +25,6 @@ int main(int argc, char ** argv) {
 
     delete knightAdventure;
 
+    //_CrtDumpMemoryLeaks();
     return 0;
 }
