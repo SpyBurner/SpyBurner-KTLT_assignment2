@@ -46,3 +46,6 @@ Assignment2.sln
 tc1_armyknights
 
 tc1_events
+/x64/Debug
+/.vscode
+/.vs/Assignment2
